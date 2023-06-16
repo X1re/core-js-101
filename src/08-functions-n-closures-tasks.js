@@ -60,10 +60,10 @@ function getPowerFunction(exponent) {
  *   getPolynom()      => null
  */
 function getPolynom(...args) {
-  if (args.length > 0) {
-    return ()=>
-  }
-  return null;
+  if (args.length === 0) return null;
+  const coeffs = args.reverse();
+  const [c = 0, b = 0, a = 0] = coeffs;
+  return (x) => a * x ** 2 + b * x + c;
 }
 
 /**
