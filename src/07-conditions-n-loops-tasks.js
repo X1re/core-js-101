@@ -221,8 +221,37 @@ function findFirstSingleChar(str) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const isIncluded = {
+    start: '[',
+    end: ']',
+  };
+  const isExcluded = {
+    start: '(',
+    end: ')',
+  };
+  switch (true) {
+    case isStartIncluded === true && isEndIncluded === true:
+      return a > b
+        ? `${isIncluded.start}${b}, ${a}${isIncluded.end}`
+        : `${isIncluded.start}${a}, ${b}${isIncluded.end}`;
+    case isStartIncluded === false && isEndIncluded === false:
+      return a > b
+        ? `${isExcluded.start}${b}, ${a}${isExcluded.end}`
+        : `${isExcluded.start}${a}, ${b}${isExcluded.end}`;
+    case isStartIncluded === true && isEndIncluded === false:
+      return a > b
+        ? `${isIncluded.start}${b}, ${a}${isExcluded.end}`
+        : `${isIncluded.start}${a}, ${b}${isExcluded.end}`;
+    case isStartIncluded === false && isEndIncluded === true:
+      return a > b
+        ? `${isExcluded.start}${b}, ${a}${isIncluded.end}`
+        : `${isExcluded.start}${a}, ${b}${isIncluded.end}`;
+
+    default:
+      break;
+  }
+  return null;
 }
 
 /**
@@ -237,8 +266,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
 
 /**
@@ -253,8 +282,13 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  const str = num.toString();
+  let newStr = '';
+  for (let i = str.length - 1; i >= 0; i -= 1) {
+    newStr += str[i];
+  }
+  return +newStr;
 }
 
 /**
@@ -277,8 +311,25 @@ function reverseInteger(/* num */) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const str = ccn.toString();
+  let sum = 0;
+  let iterNum = 1;
+  for (let i = str.length - 1; i >= 0; i -= 1) {
+    if (iterNum % 2 === 0) {
+      const newNum = str[i] * 2;
+      if (newNum > 9) {
+        const temp = newNum.toString();
+        sum += +temp[0] + +temp[1];
+      } else {
+        sum += newNum;
+      }
+    } else {
+      sum += +str[i];
+    }
+    iterNum += 1;
+  }
+  return !(sum % 10);
 }
 
 /**
@@ -295,8 +346,17 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  function findSum(num1) {
+    const arr = num1.toString().split('');
+    const sum = arr.reduce((prev, next) => +prev + +next);
+    return sum;
+  }
+  const tempAns = findSum(num);
+  if (tempAns > 10) {
+    return findSum(tempAns);
+  }
+  return tempAns;
 }
 
 /**
@@ -320,8 +380,26 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const pairs = {
+    ']': '[',
+    '}': '{',
+    ')': '(',
+    '>': '<',
+  };
+  const stack = [];
+  for (let i = 0; i < str.length; i += 1) {
+    if (pairs[str[i]]) {
+      if (stack.length > 0 && stack[stack.length - 1] === pairs[str[i]]) {
+        stack.pop();
+      } else {
+        return false;
+      }
+    } else {
+      stack.push(str[i]);
+    }
+  }
+  return stack.length === 0;
 }
 
 /**
@@ -344,8 +422,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 /**
