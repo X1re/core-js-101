@@ -132,8 +132,22 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  const rect1Right = rect1.left + rect1.width;
+  const rect1Bottom = rect1.top + rect1.height;
+  const rect2Right = rect2.left + rect2.width;
+  const rect2Bottom = rect2.top + rect2.height;
+
+  const condition1 = rect1.left > rect2Right;
+  const condition2 = rect1Right < rect2.left;
+  const condition3 = rect1.top > rect2Bottom;
+  const condition4 = rect1Bottom < rect2.top;
+
+  if (condition1 || condition2 || condition3 || condition4) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -162,8 +176,12 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  const povX = (point.x - circle.center.x) ** 2;
+  const povY = (point.y - circle.center.y) ** 2;
+  const distance = Math.sqrt(povX + povY);
+
+  return distance < circle.radius;
 }
 
 /**
@@ -438,8 +456,14 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const pathArr = pathes.map((str) => str.split('/'))
+    .map((path) => path.map((x) => (x.length ? x : '/')));
+  const set = new Set(pathArr.flat());
+  const pathesCompare = [...set].filter((x) => pathArr.every((path) => path.includes(x)));
+  return pathesCompare[0] === '/'
+    ? `/${pathesCompare.slice(1).join('/')}${pathesCompare.length > 1 ? '/' : ''}`
+    : `${pathesCompare.join('/')}${pathesCompare.length > 1 ? '/' : ''}`;
 }
 
 /**
@@ -460,8 +484,24 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const result = [];
+
+  for (let i = 0; i < m1.length; i += 1) {
+    result[i] = [];
+
+    for (let j = 0; j < m2[0].length; j += 1) {
+      let sum = 0;
+
+      for (let k = 0; k < m1[0].length; k += 1) {
+        sum += m1[i][k] * m2[k][j];
+      }
+
+      result[i][j] = sum;
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -494,8 +534,45 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const transposed = position.map((_, i) => position.map((row) => row[i]));
+  const straightMoves = () => [...position, ...transposed];
+  const isStraightWinner = (symbol) => straightMoves()
+    .some((moves) => moves.length === position.length
+      && moves.every((move) => move === symbol));
+  const diagonalMoves = () => {
+    const result = [];
+    const equalBasedDiagonal = [];
+    const sumBasedDiagonal = [];
+
+    for (let row = 0; row < position.length; row += 1) {
+      for (let col = 0; col < position.length; col += 1) {
+        if (row === col) {
+          equalBasedDiagonal.push(position[row][col]);
+        }
+      }
+    }
+
+    for (let row = 0; row < position.length; row += 1) {
+      for (let col = 0; col < position.length; col += 1) {
+        if (row + col === position.length - 1) {
+          sumBasedDiagonal.push(position[row][col]);
+        }
+      }
+    }
+
+    result.push(equalBasedDiagonal, sumBasedDiagonal);
+    return result;
+  };
+
+  const isDiagonalWinner = (symbol) => diagonalMoves()
+    .some((moves) => moves.every((move) => move === symbol));
+
+  const isWinner = (symbol) => isStraightWinner(symbol) || isDiagonalWinner(symbol);
+
+  if (isWinner('X')) return 'X';
+  if (isWinner('0')) return '0';
+  return undefined;
 }
 
 module.exports = {
